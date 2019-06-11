@@ -33,7 +33,7 @@ func (s *Search) SetQuery(q *Query) {
 func (s *Search) QueryParams() *url.Values {
 
 	if s.query == nil {
-		s.query = NewQuery()
+		return nil
 	}
 
 	if s.Debug != "" {

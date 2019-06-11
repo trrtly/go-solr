@@ -114,14 +114,16 @@ func NewSolrInterface(solrUrl, core string) (*SolrInterface, error) {
 
 // Set to new core, this is just wrapper to Connection.SetCore which mean
 // it will affect all places that use this Connection instance
-func (si *SolrInterface) SetCore(core string) {
+func (si *SolrInterface) SetCore(core string) *SolrInterface {
 	si.conn.SetCore(core)
+	return si
 }
 
 // SetBasicAuth sets the request's Authorization header to use HTTP Basic Authentication with the provided username and password.
 // See http://golang.org/pkg/net/http/#Request.SetBasicAuth
-func (si *SolrInterface) SetBasicAuth(username, password string) {
+func (si *SolrInterface) SetBasicAuth(username, password string) *SolrInterface {
 	si.conn.SetBasicAuth(username, password)
+	return si
 }
 
 // Return a new instace of Search, q is optional and one can set it later
@@ -263,4 +265,9 @@ func (si *SolrInterface) Ping() (status string, qtime int, err error) {
 		qtime = -1
 	}
 	return status, qtime, nil
+}
+
+// Query return a Query instance
+func (si *SolrInterface) Query() *Query {
+	return NewQuery(si)
 }
