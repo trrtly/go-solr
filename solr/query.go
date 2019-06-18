@@ -6,8 +6,9 @@ import (
 )
 
 type Query struct {
-	params *url.Values
-	si     *SolrInterface
+	params       *url.Values
+	si           *SolrInterface
+	ResultStruct interface{}
 }
 
 func NewQuery(si *SolrInterface) *Query {
@@ -151,6 +152,12 @@ func (q *Query) Start(start int) *Query {
 // Rows sets value for rows which means set the limit for how many rows to return
 func (q *Query) Rows(rows int) *Query {
 	q.params.Set("rows", fmt.Sprintf("%d", rows))
+	return q
+}
+
+// SetResult 设置结果集数据结构
+func (q *Query) SetResult(result interface{}) *Query {
+	q.ResultStruct = result
 	return q
 }
 

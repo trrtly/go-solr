@@ -15,7 +15,8 @@ type result struct {
 
 func main() {
 
-	si, _ := solr.NewSolrInterface("http://localhost:8983/solr", "collection1")
+	// si, _ := solr.NewSolrInterface("http://localhost:8983/solr", "collection1")
+	si, _ := solr.NewSolrInterface("http://solr3.api.epweike.net:80", "industry")
 
 	var data result
 

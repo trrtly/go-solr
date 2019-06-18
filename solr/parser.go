@@ -116,39 +116,17 @@ func (parser *ExtensiveResultParser) ParseResponse(response *SolrResponse, sr *S
 }
 
 type StandardResultParser struct {
+	ResultStruct interface{}
 }
 
 func (parser *StandardResultParser) Parse(resp_ *[]byte) (*SolrResult, error) {
 
 	sr := &SolrResult{}
-	jsonbuf, err := bytes2json(resp_)
+
+	err := json.Unmarshal(*resp_, &parser.ResultStruct)
+
 	if err != nil {
 		return sr, err
-	}
-	response := new(SolrResponse)
-	response.Response = jsonbuf
-	response.Status = int(jsonbuf["responseHeader"].(map[string]interface{})["status"].(float64))
-
-	sr.Results = new(Collection)
-	sr.Status = response.Status
-	if jsonbuf["nextCursorMark"] != nil {
-		sr.NextCursorMark = fmt.Sprintf("%s", jsonbuf["nextCursorMark"])
-	}
-
-	parser.ParseResponseHeader(response, sr)
-
-	if response.Status == 0 {
-		err := parser.ParseResponse(response, sr)
-		if err != nil {
-			return nil, err
-		}
-		parser.ParseFacetCounts(response, sr)
-		parser.ParseHighlighting(response, sr)
-		parser.ParseStats(response, sr)
-		parser.ParseMoreLikeThis(response, sr)
-		parser.ParseSpellCheck(response, sr)
-	} else {
-		parser.ParseError(response, sr)
 	}
 
 	return sr, nil

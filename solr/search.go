@@ -6,9 +6,10 @@ import (
 )
 
 type Search struct {
-	query *Query
-	conn  *Connection
-	Debug string
+	query        *Query
+	conn         *Connection
+	Debug        string
+	ResultStruct interface{}
 }
 
 // NewSearch takes c and q as optional
@@ -21,6 +22,7 @@ func NewSearch(c *Connection, q *Query) *Search {
 	if c != nil {
 		s.conn = c
 	}
+	s.ResultStruct = q.ResultStruct
 	return s
 }
 
@@ -61,13 +63,14 @@ func (s *Search) Resource(resource string, params *url.Values) (*[]byte, error) 
 
 // Result will create a StandardResultParser if no parser specified.
 // parser must be an implementation of ResultParser interface
-func (s *Search) Result(parser ResultParser) (*SolrResult, error) {
+func (s *Search) Result(parser *StandardResultParser) (*SolrResult, error) {
 	resp, err := s.Resource("select", s.QueryParams())
 	if err != nil {
 		return nil, err
 	}
 	if parser == nil {
 		parser = new(StandardResultParser)
+		parser.ResultStruct = s.ResultStruct
 	}
 	return parser.Parse(resp)
 }
